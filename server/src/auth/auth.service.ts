@@ -4,7 +4,6 @@ import { SigninDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignupDto } from './dto/signup.dto';
-import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -25,16 +24,22 @@ export class AuthService {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id };
-    const access_token = await this.jwtService.signAsync(payload);
+    const accessToken = await this.generateAccessToken(user.id);
 
     delete user.password;
-    return { access_token, user };
+    return { accessToken, user };
   }
 
-  public async signup(signupDto: SignupDto): Promise<Omit<User, 'password'>> {
+  public async signup(signupDto: SignupDto) {
     const user = await this.usersService.createUser(signupDto);
+
+    const accessToken = await this.generateAccessToken(user.id);
+
     delete user.password;
-    return user;
+    return { accessToken, user };
+  }
+
+  private async generateAccessToken(userId: string) {
+    return await this.jwtService.signAsync({ sub: userId });
   }
 }

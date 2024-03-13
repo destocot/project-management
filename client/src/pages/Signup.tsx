@@ -1,64 +1,75 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  Flex,
+  Box,
+  useToast,
+  Link as ChakraLink,
+} from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { signin } from "../store/authSlice";
+import { Form, Link, useActionData } from "react-router-dom";
+import { useEffect } from "react";
+import { SignupResponse } from "../lib/types";
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState({
-    email: "bartender@email.com",
-    username: "bartender",
-    password: "glassofgod",
-  });
+  const dispatch = useDispatch();
+  const response = useActionData() as SignupResponse;
+  const toast = useToast();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (response) {
+      if (response.error) {
+        toast({
+          title: "Error",
+          description: response.error,
+          status: "error",
+          position: "top-right",
+        });
+      }
 
-    const res = await fetch("http://localhost:3000/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log(await res.text());
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+      if (response.data) {
+        dispatch(signin(response.data));
+      }
+    }
+  }, [dispatch, response, toast]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl>
-        <FormLabel>Email address</FormLabel>
-        <Input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Username</FormLabel>
-        <Input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Password</FormLabel>
-        <Input
-          type="text"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-      </FormControl>
-      <Button type="submit" colorScheme="blue">
+    <Flex flexDir="column" justify="center" gap={4} h="75%">
+      <Heading as="h2" alignSelf="center">
         Sign Up
-      </Button>
-    </form>
+      </Heading>
+      <Form method="POST" action="/signup">
+        <Box maxW="sm" mx="auto">
+          <FormControl mb={4}>
+            <FormLabel>Email</FormLabel>
+            <Input type="email" name="email" />
+          </FormControl>
+          <FormControl mb={4}>
+            <FormLabel>Password</FormLabel>
+            <Input type="password" name="password" />
+          </FormControl>
+          <Button type="submit" colorScheme="blue" width="100%">
+            Sign up
+          </Button>
+        </Box>
+      </Form>
+      <Text mt={4} alignSelf="center" fontSize="lg">
+        Already have an account? Click{" "}
+        <ChakraLink
+          as={Link}
+          color="blue.500"
+          to="/signin"
+          fontWeight="semibold"
+        >
+          here{" "}
+        </ChakraLink>
+        to sign in.
+      </Text>
+    </Flex>
   );
 }

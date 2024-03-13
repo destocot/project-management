@@ -3,15 +3,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
 import { UsersService } from 'src/users/users.service';
-import { JWT_SECRET } from './auth.module';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly usersService: UsersService;
 
-  constructor(usersService: UsersService) {
+  constructor(usersService: UsersService, configService: ConfigService) {
     super({
-      secretOrKey: JWT_SECRET,
+      secretOrKey: configService.getOrThrow('JWT_SECRET'),
       jwtFromRequest: JwtStrategy.extractJwtFromCookie,
     });
     this.usersService = usersService;
@@ -23,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (!user) throw new UnauthorizedException();
 
+    delete user.password;
     return user;
   }
 

@@ -1,9 +1,3 @@
-import { IsNotEmpty } from 'class-validator';
+import { SignupDto } from './signup.dto';
 
-export class SigninDto {
-  @IsNotEmpty()
-  public readonly email: string;
-
-  @IsNotEmpty()
-  public readonly password: string;
-}
+export class SigninDto extends SignupDto {}

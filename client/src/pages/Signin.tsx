@@ -1,66 +1,76 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  Link as ChakraLink,
+  Flex,
+  useToast,
+} from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Form, Link, useActionData } from "react-router-dom";
 import { signin } from "../store/authSlice";
+import { useEffect } from "react";
+import { SigninResponse } from "../lib/types";
 
 export default function SigninPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const response = useActionData() as SigninResponse;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const res = await fetch("http://localhost:3000/api/auth/signin", {
-      method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    const json = await res.json();
+  const toast = useToast();
 
-    if (json.data) {
-      dispatch(signin({ userId: json.data.id }));
-      navigate("/projects");
-    } else {
-      console.log("[Error] SigninPage > handleSubmit");
+  useEffect(() => {
+    if (response) {
+      if (response.error) {
+        toast({
+          title: "Error",
+          description: response.error,
+          status: "error",
+          position: "top-right",
+        });
+      }
+
+      if (response.data) {
+        dispatch(signin(response.data));
+      }
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  }, [dispatch, response, toast]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl>
-        <FormLabel>Email address</FormLabel>
-        <Input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Password</FormLabel>
-        <Input
-          type="text"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-      </FormControl>
-      <Button type="submit" colorScheme="blue">
+    <Flex flexDir="column" justify="center" gap={4} h="75%">
+      <Heading as="h2" alignSelf="center">
         Sign In
-      </Button>
-    </form>
+      </Heading>
+      <Form method="POST" action="/signin">
+        <Box maxW="sm" mx="auto">
+          <FormControl mb={4}>
+            <FormLabel>Email</FormLabel>
+            <Input type="email" id="email" name="email" />
+          </FormControl>
+          <FormControl mb={4}>
+            <FormLabel>Password</FormLabel>
+            <Input type="password" name="password" />
+          </FormControl>
+          <Button type="submit" colorScheme="blue" width="100%">
+            Sign In
+          </Button>
+        </Box>
+      </Form>
+      <Text mt={4} alignSelf="center" fontSize="lg">
+        Don&apos;t have an account? Click{" "}
+        <ChakraLink
+          as={Link}
+          color="blue.500"
+          to="/signup"
+          fontWeight="semibold"
+        >
+          here{" "}
+        </ChakraLink>
+        to sign up.
+      </Text>
+    </Flex>
   );
 }

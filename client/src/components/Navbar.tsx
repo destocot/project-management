@@ -1,16 +1,34 @@
 import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
 import { RootState } from "../store";
+import SignoutButton from "./SignoutButton";
+import { Avatar, Flex, HStack, Heading, Spacer, Text } from "@chakra-ui/react";
+import SigninButon from "./SigninButton";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const authenticated = useSelector((state: RootState) => state.auth.userId);
-  console.log(authenticated);
+  const email = useSelector(({ auth }: RootState) => auth.acc_email);
+
   return (
-    <nav>
-      {!authenticated && <NavLink to="/">Signin</NavLink>}
-      {!authenticated && <NavLink to="/signup">Signup</NavLink>}
-      {authenticated && <button>Signout</button>}
-      {authenticated && <NavLink to="/projects">Projects</NavLink>}
-    </nav>
+    <Flex as="nav" p={4} mb={4} align="center">
+      <Heading as={Link}>Project Management</Heading>
+      <Spacer />
+      <HStack>
+        {email ? (
+          <HStack spacing={4}>
+            <Avatar
+              name={email.split("@")[0]}
+              bg="blue.500"
+              src="/avatar.png"
+              color="white"
+              alignContent={"center"}
+            />
+            <Text>{email}</Text>
+            <SignoutButton />
+          </HStack>
+        ) : (
+          <SigninButon />
+        )}
+      </HStack>
+    </Flex>
   );
 }

@@ -4,6 +4,7 @@ import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { SignupDto } from 'src/auth/dto/signup.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,28 +21,41 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ email });
   }
 
-  public async retrieveUserByUsername(username: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ username });
-  }
-
   public async retrieveUserById(id: string): Promise<User> {
     return await this.usersRepository.findOneBy({ id });
   }
 
   public async createUser(signupDto: SignupDto): Promise<User> {
-    const { email, username, password } = signupDto;
+    const { email, password } = signupDto;
 
     const isEmailTaken = await this.retrieveUserByEmail(email);
-    const isUsernameTaken = await this.retrieveUserByUsername(username);
-    if (isEmailTaken || isUsernameTaken) {
-      throw new ConflictException('Email or username already exists');
+    if (isEmailTaken) {
+      throw new ConflictException('Email already exists');
     }
 
-    const user = new User();
-    user.email = email;
-    user.username = username;
+    const user = new User({ email });
     user.password = await bcrypt.hash(password, 10);
 
     return await this.usersRepository.save(user);
+  }
+
+  public async updateUser(updateUserDto: UpdateUserDto, userId: string) {
+    const user = await this.retrieveUserById(userId);
+    const { email, password } = updateUserDto;
+
+    const query = this.usersRepository
+      .createQueryBuilder()
+      .update()
+      .where({ id: user.id });
+
+    if (email) {
+      query.set({ email });
+    }
+
+    if (password) {
+      query.set({ password });
+    }
+
+    return query.execute();
   }
 }
