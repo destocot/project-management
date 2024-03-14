@@ -3,3 +3,9 @@ export type SignupResponse =
   | undefined;
 
 export type SigninResponse = SignupResponse;
+
+export type EditEmailFormResponse =
+  | { data?: { email?: string; success: true }; error?: string }
+  | undefined;
+
+export type EditPasswordFormResponse = EditEmailFormResponse;

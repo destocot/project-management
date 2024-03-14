@@ -1,9 +1,9 @@
 import {
-  ChatIcon,
+  LockIcon,
   EmailIcon,
-  StarIcon,
   CheckCircleIcon,
   WarningIcon,
+  InfoIcon,
 } from "@chakra-ui/icons";
 import {
   List,
@@ -15,17 +15,69 @@ import {
   TabPanels,
   Tabs,
   Button,
+  useToast,
+  Avatar,
+  Text,
+  Flex,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import EditEmailForm from "../components/EditEmailForm";
+import EditPasswordForm from "../components/EditPasswordForm";
+import { EditEmailFormResponse } from "../lib/types";
+import { useActionData } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { update } from "../store/authSlice";
+import SignoutButton from "../components/SignoutButton";
+import DeleteAccountButton from "./projects/account/DeleteAccountButton";
 
 export default function AccountPage() {
   const email = useSelector(({ auth }: RootState) => auth.acc_email);
+  const createdAt = useSelector(({ auth }: RootState) => auth.acc_createdAt);
+  const dispatch = useDispatch();
+
+  const response = useActionData() as EditEmailFormResponse;
+  const toast = useToast();
 
   const [showEditEmail, setShowEditEmail] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
+
+  useEffect(() => {
+    if (response?.error) {
+      toast({
+        title: "Error",
+        description: response.error,
+        status: "error",
+        position: "top-right",
+        duration: 1000,
+        isClosable: true,
+      });
+    }
+    if (response?.data?.success) {
+      if (response.data.email) {
+        setShowEditEmail(false);
+        dispatch(update(response.data.email));
+      } else {
+        setShowEditPassword(false);
+      }
+      toast({
+        title: "Success",
+        description: "account updated",
+        status: "success",
+        position: "top-right",
+        duration: 1000,
+        isClosable: true,
+      });
+    }
+  }, [
+    response?.error,
+    response?.data?.success,
+    dispatch,
+    response?.data?.email,
+    toast,
+  ]);
 
   return (
     <Tabs mt={4} p={4} colorScheme="blue" variant="enclosed">
@@ -36,33 +88,63 @@ export default function AccountPage() {
 
       <TabPanels>
         <TabPanel>
-          <List spacing={0}>
+          <List spacing={4} fontSize="lg">
+            <ListItem
+              display="flex"
+              alignItems="center"
+              bg="blue.100"
+              p={4}
+              borderRadius="lg"
+            >
+              <Avatar
+                name={email?.split("@")[0]}
+                bg="blue.500"
+                src="/avatar.png"
+                color="white"
+                alignContent={"center"}
+              />
+            </ListItem>
             <ListItem display="flex" alignItems="center">
               <ListIcon as={EmailIcon} />
               <Button
                 mx={2}
-                size=""
+                bg="none"
+                p={0}
+                h={0}
+                sx={{ _hover: { transform: "scale(1.1)" } }}
                 onClick={() => setShowEditEmail((prev) => !prev)}
               >
                 <EditIcon />
               </Button>
               {showEditEmail ? (
-                <EditEmailForm
-                  setShowEditEmail={setShowEditEmail}
-                  defaultEmail={email ?? ""}
-                />
+                <EditEmailForm defaultEmail={email ?? ""} />
               ) : (
                 <>Email: {email} </>
               )}
             </ListItem>
-            <ListItem>
-              <ListIcon as={ChatIcon} />
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Repellendus, fuga!
+            <ListItem display="flex" alignItems="center">
+              <ListIcon as={LockIcon} />
+              <Button
+                mx={2}
+                bg="none"
+                p={0}
+                h={0}
+                sx={{ _hover: { transform: "scale(1.1)" } }}
+                onClick={() => setShowEditPassword((prev) => !prev)}
+              >
+                <EditIcon />
+              </Button>
+              {showEditPassword ? (
+                <EditPasswordForm />
+              ) : (
+                <>Password: ******** </>
+              )}
             </ListItem>
             <ListItem>
-              <ListIcon as={StarIcon} />
-              Lorem ipsum dolor sit amet.
+              <ListIcon as={InfoIcon} mr={8} />
+              <Text as="i">
+                created on: {createdAt && new Date(createdAt).toDateString()}
+              </Text>
             </ListItem>
           </List>
         </TabPanel>
@@ -91,6 +173,11 @@ export default function AccountPage() {
           </List>
         </TabPanel>
       </TabPanels>
+      <Flex mt={4} gap={4}>
+        <SignoutButton />
+        {/* <Button colorScheme="danger">Delete Account</Button> */}
+        <DeleteAccountButton />
+      </Flex>
     </Tabs>
   );
 }

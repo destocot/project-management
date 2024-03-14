@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { Project } from './project.entity';
 
 @Entity({ name: 'users' })
@@ -11,6 +17,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @OneToMany(() => Project, (project) => project.owner, { cascade: true })
   projects: Array<Project>;

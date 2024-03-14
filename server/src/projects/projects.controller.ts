@@ -14,45 +14,47 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ReqUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entities/user.entity';
+import { Project } from 'src/entities/project.entity';
 
 @UseGuards(JwtAuthGuard)
 @Controller('projects')
 export class ProjectsController {
-  private readonly projectsService: ProjectsService;
-
-  constructor(projectsService: ProjectsService) {
-    this.projectsService = projectsService;
-  }
+  constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  public createProject(
+  create(
     @Body() createProjectDto: CreateProjectDto,
     @ReqUser() user: User,
-  ) {
-    return this.projectsService.createProject(createProjectDto, user.id);
+  ): Promise<Project> {
+    return this.projectsService.create(createProjectDto, user.id);
   }
 
   @Get()
-  public retrieveAllProjects(@ReqUser() user: User) {
-    return this.projectsService.retrieveAllProjects(user.id);
+  findAll(@ReqUser() user: User): Promise<Project[]> {
+    return this.projectsService.findAll(user.id);
   }
 
   @Get(':id')
-  public retrieveOneProject(@Param('id') id: string, @ReqUser() user: User) {
-    return this.projectsService.retrieveOneProject(id, user.id);
+  findOne(@Param('id') id: string, @ReqUser() user: User): Promise<Project> {
+    return this.projectsService.findOne(id, user.id);
   }
 
   @Patch(':id')
-  public updateOneProject(
+  update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
     @ReqUser() user: User,
   ) {
-    return this.projectsService.updateOneProject(id, updateProjectDto, user.id);
+    return this.projectsService.update(id, updateProjectDto, user.id);
+  }
+
+  @Patch(':id/soft-delete')
+  softDelete(@Param('id') id: string, @ReqUser() user: User) {
+    return this.projectsService.softDelete(id, user.id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @ReqUser() user: User) {
-    return this.projectsService.softDeleteProject(id, user.id);
+    return this.projectsService.remove(id, user.id);
   }
 }

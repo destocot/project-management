@@ -6,12 +6,19 @@ const updateUser = async ({ request }: { request: Request }) => {
 
   const user = new UpdateUserDto();
   user.email = formData.get("email") as string;
+  user.currentPassword = formData.get("currentPassword") as string;
   user.password = formData.get("password") as string;
 
   const errors = await validate(user);
 
   if (errors.length > 0) {
-    console.log(errors);
+    const error = errors[0].constraints;
+    return {
+      data: null,
+      error: error
+        ? error[Object.keys(error)[0]]
+        : "Oops... Something went wrong",
+    };
   } else {
     const res = await fetch("http://localhost:3000/api/users/account/edit", {
       method: "PATCH",
@@ -22,16 +29,15 @@ const updateUser = async ({ request }: { request: Request }) => {
       credentials: "include",
     });
 
-    if (res.ok) {
-      //   const json = await res.json();
-      return new Response(JSON.stringify({ data: user.email }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } else {
-      console.log("[Error]: " + JSON.stringify(await res.json()));
+    const json = await res.json();
+
+    if (json.error) {
+      const error = json.message ?? "Oops... Something went wrong";
+      return { error };
+    }
+
+    if (json.affected === 1) {
+      return { data: { email: user.email, success: true } };
     }
   }
 

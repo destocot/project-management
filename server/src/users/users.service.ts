@@ -1,10 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { SignupDto } from 'src/auth/dto/signup.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -41,7 +46,10 @@ export class UsersService {
 
   public async updateUser(updateUserDto: UpdateUserDto, userId: string) {
     const user = await this.retrieveUserById(userId);
-    const { email, password } = updateUserDto;
+
+    const { email, currentPassword, password } = updateUserDto;
+
+    if (!email && !password) return null;
 
     const query = this.usersRepository
       .createQueryBuilder()
@@ -53,9 +61,24 @@ export class UsersService {
     }
 
     if (password) {
-      query.set({ password });
+      const valid = await bcrypt.compare(currentPassword, user.password);
+      if (!valid) {
+        throw new BadRequestException('Invalid password');
+      }
+      const hashed = await bcrypt.hash(password, 10);
+      query.set({ password: hashed });
     }
 
     return query.execute();
+  }
+
+  public async deleteUser(userId: string) {
+    const user = await this.retrieveUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return this.usersRepository.delete({ id: user.id });
   }
 }

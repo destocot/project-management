@@ -21,7 +21,7 @@ export class AuthService {
     const user = await this.usersService.retrieveUserByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await this.validatePassword(password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const accessToken = await this.generateAccessToken(user.id);
@@ -41,5 +41,9 @@ export class AuthService {
 
   private async generateAccessToken(userId: string) {
     return await this.jwtService.signAsync({ sub: userId });
+  }
+
+  private async validatePassword(password: string, hashed: string) {
+    return await bcrypt.compare(password, hashed);
   }
 }

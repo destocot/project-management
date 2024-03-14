@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   MinLength,
   IsOptional,
+  ValidateIf,
 } from "class-validator";
 
 export class SignupDto {
@@ -30,4 +31,9 @@ export class UpdateUserDto {
   @MinLength(6, { message: "Password must be at least 6 characters." })
   @IsOptional()
   password?: string;
+
+  @IsString({ message: "Password must be a string." })
+  @MinLength(6, { message: "Password must be at least 6 characters." })
+  @ValidateIf((o) => o.password?.length >= 6)
+  currentPassword: string;
 }

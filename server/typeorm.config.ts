@@ -4,7 +4,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 const configService = new ConfigService();
 
-export default new DataSource({
+export const dataSourceOptions = {
   type: 'postgres',
   host: configService.getOrThrow('DB_HOST'),
   port: configService.getOrThrow('DB_PORT'),
@@ -13,4 +13,6 @@ export default new DataSource({
   database: configService.getOrThrow('DB_NAME'),
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['migrations/*{.ts,.js}'],
-} satisfies DataSourceOptions);
+} satisfies DataSourceOptions;
+
+export default new DataSource(dataSourceOptions);

@@ -56,6 +56,7 @@ export default function App() {
         // console.log(res);
         if (res.ok) {
           const account = await res.json();
+          // console.log(account);
           dispatch(signin(account));
         } else {
           dispatch(signout());

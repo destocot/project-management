@@ -26,7 +26,7 @@ export class Project {
   @Column()
   owner_id: string;
 
-  constructor(project: Partial<Project>) {
+  constructor(project?: Partial<Project>) {
     Object.assign(this, project);
   }
 }

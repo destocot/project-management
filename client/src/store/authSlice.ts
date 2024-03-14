@@ -4,12 +4,14 @@ export type AuthState = {
   authenticated: boolean | null;
   acc_id: string | null;
   acc_email: string | null;
+  acc_createdAt: Date | null;
 };
 
 const initialState: AuthState = {
   authenticated: null,
   acc_id: null,
   acc_email: null,
+  acc_createdAt: null,
 };
 
 const authSlice = createSlice({
@@ -20,6 +22,7 @@ const authSlice = createSlice({
       state.authenticated = true;
       state.acc_id = action.payload.id;
       state.acc_email = action.payload.email;
+      state.acc_createdAt = action.payload.created_at;
     },
     signout: (state) => {
       Object.assign(state, initialState);

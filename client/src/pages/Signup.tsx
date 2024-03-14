@@ -34,6 +34,14 @@ export default function SignupPage() {
 
       if (response.data) {
         dispatch(signin(response.data));
+        toast({
+          title: "Success",
+          description: "Welcome!",
+          status: "success",
+          position: "top-right",
+          duration: 1000,
+          isClosable: true,
+        });
       }
     }
   }, [dispatch, response, toast]);

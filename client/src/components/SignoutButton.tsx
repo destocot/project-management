@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import { signout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function SignoutButton() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const toast = useToast();
   const handleClick = async () => {
     const res = await fetch("http://localhost:3000/api/auth/signout", {
       method: "POST",
@@ -15,6 +15,14 @@ export default function SignoutButton() {
     if (res.ok) {
       dispatch(signout());
       navigate("/", { replace: true });
+      toast({
+        title: "Success",
+        description: "Good-bye!",
+        status: "success",
+        position: "top-right",
+        duration: 1000,
+        isClosable: true,
+      });
     } else {
       console.log("[Error]: SignoutButton > handleClick");
     }

@@ -24,6 +24,11 @@ const colors = {
     600: "#ca8a04",
     500: "#eab308",
   },
+  danger: {
+    700: "#b91c1c",
+    600: "#dc2626",
+    500: "#ef4444",
+  },
 };
 
 const theme = extendTheme({ colors });
