@@ -4,6 +4,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectsModule } from './projects/projects.module';
+import { FeaturesModule } from './features/features.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { ProjectsModule } from './projects/projects.module';
     AuthModule,
     UsersModule,
     ProjectsModule,
+    FeaturesModule,
+    TasksModule,
   ],
   controllers: [],
   providers: [],

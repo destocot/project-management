@@ -1,16 +1,16 @@
 import { Link, useLoaderData, useActionData } from "react-router-dom";
 import { Project } from "../../../../lib/types";
-import { Box, Button, HStack } from "@chakra-ui/react";
+import { Box, Button, Divider, HStack, Heading } from "@chakra-ui/react";
 import { ArrowLeftIcon } from "@chakra-ui/icons";
 import EditProjectButton from "./edit-project-button";
 import { useState, useEffect } from "react";
 import EditProjectTitleForm from "./edit-project-title-form";
 import { successToast } from "../../../../components/toasts";
+import FeaturesList from "./features-list";
 
 export default function ProjectDetails() {
   const project = useLoaderData() as Project;
   const response = useActionData() as { id: string };
-
   const [editProjectTitle, setEditProjectTitle] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function ProjectDetails() {
   }, [response?.id]);
 
   return (
-    <div>
+    <Box p={4}>
       <HStack>
         <Button
           leftIcon={<ArrowLeftIcon />}
@@ -33,13 +33,28 @@ export default function ProjectDetails() {
         </Button>
         <EditProjectButton setEditProjectTitle={setEditProjectTitle} />
       </HStack>
-      <EditProjectTitleForm
-        projectTitle={project.title}
-        editProjectTitle={editProjectTitle}
-      />
-      <Box as="pre" mt={4}>
-        {JSON.stringify(project, null, 2)}
-      </Box>
-    </div>
+      <Divider my={4} />
+      <HStack mt={4}>
+        <Heading
+          as="h2"
+          fontSize="4xl"
+          fontWeight="semibold"
+          bg="blue.500"
+          color="white"
+          py={1}
+          px={2}
+          mr={2}
+          borderRadius="lg"
+        >
+          Project:
+        </Heading>
+        <EditProjectTitleForm
+          projectTitle={project.title}
+          editProjectTitle={editProjectTitle}
+        />
+      </HStack>
+      <Divider my={4} />
+      <FeaturesList projectId={project.id} />
+    </Box>
   );
 }

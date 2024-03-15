@@ -29,6 +29,11 @@ const colors = {
     600: "#dc2626",
     500: "#ef4444",
   },
+  success: {
+    700: "#15803d",
+    600: "#16a34a",
+    500: "#22c55e",
+  },
 };
 
 const theme = extendTheme({ colors });

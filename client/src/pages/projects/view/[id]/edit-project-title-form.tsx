@@ -19,18 +19,18 @@ export default function EditProjectTitleForm({
   if (editProjectTitle) {
     return (
       <Form method="PATCH" action={`/projects/view/${params.id}`}>
-        <FormControl display="flex" gap={4} alignItems="center" mt={4}>
+        <FormControl display="flex" gap={4} alignItems="center">
           <Input
             type="text"
             name="title"
             borderTop="none"
             borderX="none"
             _focus={{ ring: "none" }}
-            fontSize="2xl"
+            fontSize="4xl"
             fontWeight="semibold"
             w={`${title.length}ch`}
-            lineHeight="40px"
             pl={0}
+            boxSizing="border-box"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -43,13 +43,7 @@ export default function EditProjectTitleForm({
   }
 
   return (
-    <Heading
-      as="h3"
-      fontSize="2xl"
-      fontWeight="semibold"
-      lineHeight="40px"
-      mt={4}
-    >
+    <Heading as="h2" fontSize="4xl" fontWeight="semibold">
       {projectTitle}
     </Heading>
   );

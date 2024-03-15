@@ -76,7 +76,7 @@ export default function DeleteAccountButton() {
             <Button colorScheme="danger" onClick={handleDelete}>
               Confirm
             </Button>
-            <Button variant="outline" mr={3} onClick={onClose}>
+            <Button variant="outline" onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
