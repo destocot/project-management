@@ -1,7 +1,8 @@
 import { validate } from "class-validator";
 import { UpdateUserDto } from "../lib/schemas";
+import { BASE_API_URL } from "../lib/constants";
 
-const updateUser = async ({ request }: { request: Request }) => {
+const updateUserAction = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
 
   const user = new UpdateUserDto();
@@ -20,7 +21,7 @@ const updateUser = async ({ request }: { request: Request }) => {
         : "Oops... Something went wrong",
     };
   } else {
-    const res = await fetch("http://localhost:3000/api/users/account/edit", {
+    const res = await fetch(`${BASE_API_URL}/users/account/edit`, {
       method: "PATCH",
       body: JSON.stringify(user),
       headers: {
@@ -44,4 +45,4 @@ const updateUser = async ({ request }: { request: Request }) => {
   return null;
 };
 
-export default updateUser;
+export default updateUserAction;

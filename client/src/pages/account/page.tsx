@@ -15,23 +15,23 @@ import {
   TabPanels,
   Tabs,
   Button,
-  useToast,
   Avatar,
   Text,
   Flex,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState } from "../../store";
 import { useState, useEffect } from "react";
 import { EditIcon } from "@chakra-ui/icons";
-import EditEmailForm from "../components/EditEmailForm";
-import EditPasswordForm from "../components/EditPasswordForm";
-import { EditEmailFormResponse } from "../lib/types";
+import EditEmailForm from "../../components/EditEmailForm";
+import EditPasswordForm from "../../components/EditPasswordForm";
+import { EditEmailFormResponse } from "../../lib/types";
 import { useActionData } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { update } from "../store/authSlice";
-import SignoutButton from "../components/SignoutButton";
-import DeleteAccountButton from "./projects/account/DeleteAccountButton";
+import { update } from "../../store/authSlice";
+import SignoutButton from "../../components/SignoutButton";
+import DeleteAccountButton from "../account/DeleteAccountButton";
+import { errorToast, successToast } from "../../components/toasts";
 
 export default function AccountPage() {
   const email = useSelector(({ auth }: RootState) => auth.acc_email);
@@ -39,21 +39,16 @@ export default function AccountPage() {
   const dispatch = useDispatch();
 
   const response = useActionData() as EditEmailFormResponse;
-  const toast = useToast();
 
   const [showEditEmail, setShowEditEmail] = useState(false);
   const [showEditPassword, setShowEditPassword] = useState(false);
 
   useEffect(() => {
     if (response?.error) {
-      toast({
-        title: "Error",
-        description: response.error,
-        status: "error",
-        position: "top-right",
-        duration: 1000,
-        isClosable: true,
-      });
+      errorToast(
+        response.error ??
+          "Oops. Something went wrong trying update your account."
+      );
     }
     if (response?.data?.success) {
       if (response.data.email) {
@@ -62,21 +57,13 @@ export default function AccountPage() {
       } else {
         setShowEditPassword(false);
       }
-      toast({
-        title: "Success",
-        description: "account updated",
-        status: "success",
-        position: "top-right",
-        duration: 1000,
-        isClosable: true,
-      });
+      successToast("acount updated");
     }
   }, [
     response?.error,
     response?.data?.success,
     dispatch,
     response?.data?.email,
-    toast,
   ]);
 
   return (

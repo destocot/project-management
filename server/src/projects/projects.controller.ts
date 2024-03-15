@@ -34,6 +34,11 @@ export class ProjectsController {
     return this.projectsService.findAll(user.id);
   }
 
+  @Get('archived')
+  findAllArchived(@ReqUser() user: User): Promise<Project[]> {
+    return this.projectsService.findAllArchived(user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @ReqUser() user: User): Promise<Project> {
     return this.projectsService.findOne(id, user.id);

@@ -9,3 +9,10 @@ export type EditEmailFormResponse =
   | undefined;
 
 export type EditPasswordFormResponse = EditEmailFormResponse;
+
+export type Project = {
+  id: string;
+  title: string;
+  owner_id: string;
+  deleted_at: Date | null;
+};

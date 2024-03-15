@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/index.ts";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, UseToastOptions } from "@chakra-ui/react";
 
 const colors = {
   blue: {
@@ -33,9 +33,18 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
+const defaultToastOptions: UseToastOptions = {
+  duration: 1000,
+  isClosable: true,
+  position: "top-right",
+};
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
+    <ChakraProvider
+      theme={theme}
+      toastOptions={{ defaultOptions: defaultToastOptions }}
+    >
       <Provider store={store}>
         <App />
       </Provider>

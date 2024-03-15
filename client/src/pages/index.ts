@@ -1,12 +1,17 @@
-import HomePage from "./Home";
-import SigninPage from "./Signin";
-import SignupPage from "./Signup";
-import AccountPage from "./Account";
-import ProjectsPage from "./Projects";
-import CreatePage from "./projects/Create";
-import ViewPage from "./projects/View";
-import ArchivePage from "./projects/Archive";
-import NotFound from "./NotFound";
+import HomePage from "./page";
+import SigninPage from "./signin/page";
+import SignupPage from "./signup/page";
+import AccountPage from "./account/page";
+
+// projects
+import ProjectsPage from "./projects/page";
+import CreatePage from "./projects/create/page";
+import ArchivePage from "./projects/archive/page";
+//view
+// [id]
+import ProjectDetailsPage from "./projects/view/[id]/page";
+
+import NotFound, { ProjectNotFound } from "./NotFound";
 
 export {
   HomePage,
@@ -15,7 +20,8 @@ export {
   AccountPage,
   ProjectsPage,
   CreatePage,
-  ViewPage,
+  ProjectDetailsPage,
   ArchivePage,
   NotFound,
+  ProjectNotFound,
 };

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from 'src/entities/project.entity';
-import { Repository } from 'typeorm';
+import { Repository, IsNull, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -19,11 +19,24 @@ export class ProjectsService {
     return projects;
   }
 
+  async findAllArchived(userId: string): Promise<Project[]> {
+    const projects = await this.projectsRepository.find({
+      where: { owner_id: userId, deleted_at: Not(IsNull()) },
+      withDeleted: true,
+    });
+    return projects;
+  }
+
   async findOne(projectId: string, userId: string): Promise<Project> {
     const project = await this.projectsRepository.findOne({
       where: { id: projectId, owner_id: userId },
-      withDeleted: true,
+      // withDeleted: true,
     });
+
+    if (!project) {
+      throw new NotFoundException();
+    }
+
     return project;
   }
 
@@ -65,6 +78,7 @@ export class ProjectsService {
   async remove(id: string, userId: string) {
     const project = await this.projectsRepository.findOne({
       where: { id, owner_id: userId },
+      withDeleted: true,
     });
 
     if (!project) throw new NotFoundException();

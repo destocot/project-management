@@ -1,7 +1,9 @@
 import { validate } from "class-validator";
 import { SignupDto } from "../lib/schemas";
+import { errorToast } from "../components/toasts";
+import { BASE_API_URL } from "../lib/constants";
 
-const signup = async ({ request }: { request: Request }) => {
+const signupAction = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
 
   const user = new SignupDto();
@@ -12,13 +14,11 @@ const signup = async ({ request }: { request: Request }) => {
 
   if (errors.length > 0) {
     const error = errors[0].constraints;
-    return {
-      error: error
-        ? error[Object.keys(error)[0]]
-        : "Oops... Something went wrong",
-    };
+    return errorToast(
+      error ? error[Object.keys(error)[0]] : "Oops... Something went wrong"
+    );
   } else {
-    const res = await fetch("http://localhost:3000/api/auth/signup", {
+    const res = await fetch(`${BASE_API_URL}/auth/signup`, {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
@@ -29,7 +29,7 @@ const signup = async ({ request }: { request: Request }) => {
 
     const json = await res.json();
     if (json.error) {
-      return { error: json.message };
+      return errorToast(json.message);
     }
 
     if (json.data) {
@@ -37,7 +37,7 @@ const signup = async ({ request }: { request: Request }) => {
     }
   }
 
-  return null;
+  return errorToast("Oops... Something went wrong.");
 };
 
-export default signup;
+export default signupAction;

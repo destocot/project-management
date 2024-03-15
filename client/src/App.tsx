@@ -13,13 +13,27 @@ import {
   ProjectsPage,
   SigninPage,
   SignupPage,
-  ViewPage,
+  ProjectDetailsPage,
+  ProjectNotFound,
 } from "./pages";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { signin, signout } from "./store/authSlice";
 import { AuthLayout, MainLayout, RootLayout } from "./layouts";
-import { signup, signin as signinAction, updateUser } from "./actions";
+import {
+  signupAction,
+  signinAction,
+  updateUserAction,
+  createProjectAction,
+  updateProjectAction,
+  archiveProjectAction,
+} from "./actions";
+import {
+  archivedProjectsLoader,
+  projectDetailsLoader,
+  projectsLoader,
+} from "./loaders";
+import { BASE_API_URL } from "./lib/constants";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,16 +41,37 @@ const router = createBrowserRouter(
       <Route index element={<HomePage />} />
       <Route path="/" element={<AuthLayout />}>
         <Route path="signin" element={<SigninPage />} action={signinAction} />
-        <Route path="signup" element={<SignupPage />} action={signup} />
+        <Route path="signup" element={<SignupPage />} action={signupAction} />
       </Route>
       <Route path="/" element={<MainLayout />}>
-        <Route path="projects">
-          <Route index element={<ProjectsPage />} />
-          <Route path="create" element={<CreatePage />} />
-          <Route path="archive" element={<ArchivePage />} />
-          <Route path="view/:id" element={<ViewPage />} />
+        <Route path="projects" action={archiveProjectAction}>
+          <Route index element={<ProjectsPage />} loader={projectsLoader} />
+          <Route
+            path="create"
+            element={<CreatePage />}
+            action={createProjectAction}
+          />
+          <Route
+            path="archive"
+            element={<ArchivePage />}
+            loader={archivedProjectsLoader}
+            action={archiveProjectAction}
+          />
+          <Route path="view">
+            <Route
+              path=":id"
+              element={<ProjectDetailsPage />}
+              loader={projectDetailsLoader}
+              action={updateProjectAction}
+              errorElement={<ProjectNotFound />}
+            />
+          </Route>
         </Route>
-        <Route path="account" element={<AccountPage />} action={updateUser} />
+        <Route
+          path="account"
+          element={<AccountPage />}
+          action={updateUserAction}
+        />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Route>
@@ -49,21 +84,19 @@ export default function App() {
   useEffect(() => {
     (async function run() {
       try {
-        const res = await fetch("http://localhost:3000/api/users/account", {
+        const res = await fetch(`${BASE_API_URL}/users/account`, {
           credentials: "include",
         });
 
-        // console.log(res);
         if (res.ok) {
           const account = await res.json();
-          // console.log(account);
           dispatch(signin(account));
         } else {
           dispatch(signout());
         }
       } catch (error) {
         if (error instanceof Error) {
-          console.log(error.message);
+          console.error(error.message);
         } else {
           console.error(error);
         }

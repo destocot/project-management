@@ -8,44 +8,24 @@ import {
   Text,
   Link as ChakraLink,
   Flex,
-  useToast,
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { Form, Link, useActionData } from "react-router-dom";
-import { signin } from "../store/authSlice";
+import { signin } from "../../store/authSlice";
 import { useEffect } from "react";
-import { SigninResponse } from "../lib/types";
+import { SigninResponse } from "../../lib/types";
+import { successToast } from "../../components/toasts";
 
 export default function SigninPage() {
   const dispatch = useDispatch();
   const response = useActionData() as SigninResponse;
 
-  const toast = useToast();
-
   useEffect(() => {
-    if (response) {
-      if (response.error) {
-        toast({
-          title: "Error",
-          description: response.error,
-          status: "error",
-          position: "top-right",
-        });
-      }
-
-      if (response.data) {
-        dispatch(signin(response.data));
-        toast({
-          title: "Success",
-          description: "Welcome!",
-          status: "success",
-          position: "top-right",
-          duration: 1000,
-          isClosable: true,
-        });
-      }
+    if (response?.data) {
+      dispatch(signin(response.data));
+      successToast("Welcome!");
     }
-  }, [dispatch, response, toast]);
+  }, [dispatch, response?.data]);
 
   return (
     <Flex flexDir="column" justify="center" gap={4} h="75%">

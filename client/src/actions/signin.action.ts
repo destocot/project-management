@@ -1,7 +1,9 @@
 import { validate } from "class-validator";
 import { SignupDto } from "../lib/schemas";
+import { errorToast } from "../components/toasts";
+import { BASE_API_URL } from "../lib/constants";
 
-const signin = async ({ request }: { request: Request }) => {
+const signinAction = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
 
   const user = new SignupDto();
@@ -9,17 +11,12 @@ const signin = async ({ request }: { request: Request }) => {
   user.password = formData.get("password") as string;
 
   const errors = await validate(user);
-
   if (errors.length > 0) {
-    const error = errors[0].constraints;
-    return {
-      data: null,
-      error: error
-        ? "Invalid email or password"
-        : "Oops... Something went wrong",
-    };
-  } else {
-    const res = await fetch("http://localhost:3000/api/auth/signin", {
+    return errorToast("Invalid email or password");
+  }
+
+  try {
+    const res = await fetch(`${BASE_API_URL}/auth/signin`, {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
@@ -30,15 +27,20 @@ const signin = async ({ request }: { request: Request }) => {
 
     const json = await res.json();
     if (json.error) {
-      return { error: "Invalid email or password" };
+      return errorToast("Invalid email or password");
     }
 
     if (json.data) {
       return { data: json.data };
     }
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
+    }
+    return errorToast("Oops... Something went wrong.");
   }
 
-  return null;
+  return errorToast("Oops... Something went wrong.");
 };
 
-export default signin;
+export default signinAction;

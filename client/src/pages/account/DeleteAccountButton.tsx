@@ -11,34 +11,27 @@ import {
   FormControl,
   Input,
   Text,
-  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { signout } from "../../../store/authSlice";
+import { signout } from "../../store/authSlice";
+import { errorToast, successToast } from "../../components/toasts";
+import { BASE_API_URL } from "../../lib/constants";
 
 const randomCode = Math.floor(Math.random() * (999999 - 100000)) + 100000;
 
 export default function DeleteAccountButton() {
   const [code, setCode] = useState("");
-  const toast = useToast();
   const dispatch = useDispatch();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDelete = async () => {
     if (+code !== randomCode) {
-      return toast({
-        title: "Error",
-        description: "Invalid code, please try again.",
-        status: "error",
-        position: "top-right",
-        duration: 1000,
-        isClosable: true,
-      });
+      return errorToast("Invalid code, please try again.");
     }
 
-    const res = await fetch("http://localhost:3000/api/users/account/delete", {
+    const res = await fetch(`${BASE_API_URL}/users/account/delete`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -47,23 +40,9 @@ export default function DeleteAccountButton() {
 
     if (json.affected) {
       dispatch(signout());
-      toast({
-        title: "Success",
-        description: "Account successfully deleted",
-        status: "success",
-        position: "top-right",
-        duration: 1000,
-        isClosable: true,
-      });
+      successToast("Account successfully deleted.");
     } else {
-      return toast({
-        title: "Error",
-        description: "Oops. Something went wrong.",
-        status: "error",
-        position: "top-right",
-        duration: 1000,
-        isClosable: true,
-      });
+      return errorToast("Oops. Something went wrong.");
     }
   };
 
