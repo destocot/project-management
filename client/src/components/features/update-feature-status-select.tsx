@@ -16,8 +16,7 @@ export default function UpdateFeatureStatusSelect({
 }: UpdateFeatureStatusSelectProps) {
   const [status, setStatus] = useState(featureStatus);
 
-  const params = useParams();
-  const projectId = params.id;
+  const { projectId } = useParams();
 
   const featureId = useSelector(({ feature }: RootState) => feature.featureId);
 

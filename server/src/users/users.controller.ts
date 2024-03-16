@@ -40,7 +40,7 @@ export class UsersController {
 
   @Delete()
   deleteAccount(@ReqUser() user: User) {
-    this.logger.log(`DELETE /api/users User ID: ${user.id}`);
+    this.logger.log(`DELETE /api/users`);
     return this.usersService.deleteUser(user.id);
   }
 }
