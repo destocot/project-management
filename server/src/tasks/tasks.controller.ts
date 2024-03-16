@@ -8,59 +8,75 @@ import {
   Patch,
   Delete,
   ParseUUIDPipe,
+  Logger,
 } from '@nestjs/common';
 
 import { ReqUser } from 'src/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/entities/user.entity';
 import { TasksService } from './tasks.service';
+import { CreateTaskDto } from './create-task.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('tasks')
 @UseGuards(JwtAuthGuard)
-@Controller('projects/:projectId/features/:featureId/tasks')
+@Controller()
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  private readonly logger: Logger;
 
-  @Post()
-  create(
-    @Param('featureId', ParseUUIDPipe)
-    featureId: string,
-    @Body('content') content: string,
-  ) {
-    return this.tasksService.create(featureId, content);
+  constructor(private readonly tasksService: TasksService) {
+    this.logger = new Logger('TasksController', {
+      timestamp: true,
+    });
   }
 
   @Get()
   findAll(
     @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('featureId', ParseUUIDPipe)
-    featureId: string,
+    @Param('featureId', ParseUUIDPipe) featureId: string,
     @ReqUser() user: User,
   ) {
+    this.logger.log(
+      `GET /api/projects/${projectId}/features/${featureId}/tasks`,
+    );
+
     return this.tasksService.findAll(projectId, featureId, user.id);
   }
 
-  @Patch(':taskId')
-  update(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('featureId', ParseUUIDPipe)
-    featureId: string,
-    @Param('taskId', ParseUUIDPipe)
-    taskId: string,
-    @ReqUser() user: User,
+  @Post()
+  create(
+    @Param('featureId', ParseUUIDPipe) featureId: string,
+    @Body() createTaskDto: CreateTaskDto,
   ) {
-    return this.tasksService.update(projectId, featureId, taskId, user.id);
+    this.logger.log(
+      `POST /api/projects/:projectId/features/${featureId}/tasks`,
+    );
+    return this.tasksService.create(featureId, createTaskDto);
   }
 
-  @Delete(':taskId')
+  @Patch(':id')
+  update(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('featureId', ParseUUIDPipe) featureId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @ReqUser() user: User,
+  ) {
+    this.logger.log(
+      `PATCH /api/projects/${projectId}/features/${featureId}/tasks/${id}`,
+    );
+    return this.tasksService.update(projectId, featureId, id, user.id);
+  }
+
+  @Delete(':id')
   remove(
     @Param('featureId', ParseUUIDPipe) featureId: string,
     @Param('projectId', ParseUUIDPipe) projectId: string,
-
-    @Param('taskId', ParseUUIDPipe)
-    taskId: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @ReqUser() user: User,
   ) {
-    console.log(featureId, projectId, taskId, user);
-    return this.tasksService.remove(projectId, featureId, taskId, user.id);
+    this.logger.log(
+      `DELETE /api/projects/${projectId}/features/${featureId}/tasks/${id}`,
+    );
+    return this.tasksService.remove(projectId, featureId, id, user.id);
   }
 }

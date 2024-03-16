@@ -2,9 +2,9 @@ import { createStandaloneToast, UseToastOptions } from "@chakra-ui/react";
 
 const { toast } = createStandaloneToast({
   defaultOptions: {
-    duration: 1000,
+    duration: 1500,
     isClosable: true,
-    position: "top-right",
+    position: "bottom-right",
   },
 });
 

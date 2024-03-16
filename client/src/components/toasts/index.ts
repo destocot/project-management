@@ -1,4 +1,4 @@
-import errorToast from "./error-toast";
-import successToast from "./success-toast";
+import error from "./error-toast";
+import success from "./success-toast";
 
-export { errorToast, successToast };
+export { error, success };

@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import SignoutButton from "./SignoutButton";
+import SignoutButton from "./account/signout-button";
 import { Avatar, Flex, HStack, Heading, Spacer, Text } from "@chakra-ui/react";
-import SigninButon from "./SigninButton";
+import SigninButon from "./account/signin-button";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {

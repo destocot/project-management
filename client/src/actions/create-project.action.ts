@@ -1,5 +1,5 @@
 import { validate } from "class-validator";
-import { errorToast } from "../components/toasts";
+import * as toast from "../components/toasts";
 import { IsNotEmpty, IsString, MinLength } from "class-validator";
 import { BASE_API_URL } from "../lib/constants";
 
@@ -19,7 +19,7 @@ const createProjectAction = async ({ request }: { request: Request }) => {
   const errors = await validate(project);
   if (errors.length > 0) {
     const error = errors[0].constraints;
-    return errorToast(
+    return toast.error(
       error ? error[Object.keys(error)[0]] : "Oops... Something went wrong"
     );
   }
@@ -33,14 +33,13 @@ const createProjectAction = async ({ request }: { request: Request }) => {
       },
       credentials: "include",
     });
-
     const json = await res.json();
 
     if (json.error) {
       const errorMessage = Array.isArray(json.message)
         ? json.message[0]
         : json.message;
-      return errorToast(errorMessage);
+      return toast.error(errorMessage);
     }
 
     if (json.id) {
@@ -50,10 +49,9 @@ const createProjectAction = async ({ request }: { request: Request }) => {
     if (e instanceof Error) {
       console.error(e.message);
     }
-    return errorToast("Oops... Something went wrong.");
   }
 
-  return errorToast("Oops... Something went wrong.");
+  return toast.error("Oops... Something went wrong.");
 };
 
 export default createProjectAction;

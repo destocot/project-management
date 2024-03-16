@@ -23,7 +23,9 @@ export class Feature {
   @Column()
   description: string;
 
-  @ManyToOne(() => Project, (project) => project.features)
+  @ManyToOne(() => Project, (project) => project.features, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
@@ -33,9 +35,7 @@ export class Feature {
   @Column({ default: FeatureStatus.OPEN })
   status: FeatureStatus;
 
-  @OneToMany(() => Task, (task) => task.feature, {
-    cascade: true,
-  })
+  @OneToMany(() => Task, (task) => task.feature)
   tasks: Array<Task>;
 
   constructor(feature: Partial<Feature>) {

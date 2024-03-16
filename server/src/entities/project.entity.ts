@@ -21,13 +21,11 @@ export class Project {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => User, (user) => user.projects)
+  @ManyToOne(() => User, (user) => user.projects, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 
-  @OneToMany(() => Feature, (feature) => feature.project, {
-    cascade: true,
-  })
+  @OneToMany(() => Feature, (feature) => feature.project)
   features: Array<Feature>;
 
   @Column()

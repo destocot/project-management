@@ -8,57 +8,71 @@ import {
   Patch,
   Delete,
   ParseUUIDPipe,
+  Logger,
 } from '@nestjs/common';
 import { FeaturesService } from './features.service';
 import { ReqUser } from 'src/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/entities/user.entity';
-import { FeatureStatus } from '../entities/feature.entity';
+import { UpdateFeatureStatusDto } from './dto/update-feature-status.dto';
+import { CreateFeatureDto } from './dto/create-feature.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('features')
 @UseGuards(JwtAuthGuard)
-@Controller('projects/:projectId/features')
+@Controller()
 export class FeaturesController {
-  constructor(private readonly featuresService: FeaturesService) {}
+  private readonly logger: Logger;
 
-  @Post()
-  create(
-    @Body('description') description: string,
-    @Param('projectId', ParseUUIDPipe)
-    projectId: string,
-  ) {
-    return this.featuresService.create(description, projectId);
+  constructor(private readonly featuresService: FeaturesService) {
+    this.logger = new Logger('FeaturesController', {
+      timestamp: true,
+    });
   }
 
   @Get()
   findAll(
-    @ReqUser() user: User,
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ) {
-    return this.featuresService.findAll(user.id, projectId);
-  }
-
-  @Patch(':featureId')
-  update(
-    @Param('featureId', ParseUUIDPipe) featureId: string,
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body('status') newStatus: FeatureStatus,
     @ReqUser() user: User,
   ) {
+    this.logger.log(`GET /api/projects/${projectId}/features`);
+    return this.featuresService.findAll(projectId, user.id);
+  }
+
+  @Post()
+  create(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Body() createFeatureDto: CreateFeatureDto,
+  ) {
+    this.logger.log(`POST /api/projects/${projectId}/features`);
+    return this.featuresService.create(projectId, createFeatureDto);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateFeatureStatusDto: UpdateFeatureStatusDto,
+    @ReqUser() user: User,
+  ) {
+    this.logger.log(`PATCH /api/projects/${projectId}/features/${id}`);
     return this.featuresService.update(
       projectId,
-      featureId,
-      newStatus,
+      id,
+      updateFeatureStatusDto,
       user.id,
     );
   }
 
-  @Delete(':featureId')
+  @Delete(':id')
   remove(
-    @Param('featureId', ParseUUIDPipe) featureId: string,
     @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @ReqUser() user: User,
   ) {
-    return this.featuresService.remove(featureId, projectId, user.id);
+    this.logger.log(`DELETE /api/projects/${projectId}/features/${id}`);
+    return this.featuresService.remove(projectId, id, user.id);
   }
 }

@@ -4,18 +4,16 @@ import { SigninDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignupDto } from './dto/signup.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
-  private readonly usersService: UsersService;
-  private readonly jwtService: JwtService;
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  constructor(usersService: UsersService, jwtService: JwtService) {
-    this.usersService = usersService;
-    this.jwtService = jwtService;
-  }
-
-  public async signin(signinDto: SigninDto) {
+  async signin(signinDto: SigninDto, res: Response) {
     const { email, password } = signinDto;
 
     const user = await this.usersService.retrieveUserByEmail(email);
@@ -24,26 +22,33 @@ export class AuthService {
     const valid = await this.validatePassword(password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    const accessToken = await this.generateAccessToken(user.id);
+    await this.setAccessToken(res, user.id);
 
     delete user.password;
-    return { accessToken, user };
+    return res.json(user);
   }
 
-  public async signup(signupDto: SignupDto) {
+  async signup(signupDto: SignupDto, res: Response) {
     const user = await this.usersService.createUser(signupDto);
 
-    const accessToken = await this.generateAccessToken(user.id);
+    await this.setAccessToken(res, user.id);
 
     delete user.password;
-    return { accessToken, user };
-  }
-
-  private async generateAccessToken(userId: string) {
-    return await this.jwtService.signAsync({ sub: userId });
+    return res.json(user);
   }
 
   private async validatePassword(password: string, hashed: string) {
     return await bcrypt.compare(password, hashed);
+  }
+
+  private async setAccessToken(res: Response, userId: string) {
+    const accessToken = await this.jwtService.signAsync({ sub: userId });
+
+    res.cookie('access_token', accessToken, {
+      expires: new Date(Date.now() + 3600000),
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
   }
 }

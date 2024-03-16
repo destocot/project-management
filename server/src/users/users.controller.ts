@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Delete,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -13,31 +14,33 @@ import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReqUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entities/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @UseGuards(JwtAuthGuard)
-@Controller('users/account')
+@Controller()
 export class UsersController {
-  private readonly usersService: UsersService;
+  private readonly logger: Logger;
 
-  constructor(usersService: UsersService) {
-    this.usersService = usersService;
+  constructor(private readonly usersService: UsersService) {
+    this.logger = new Logger('UsersController', { timestamp: true });
   }
 
-  @Patch('/edit')
-  public updateAccount(
-    @Body() updateUserDto: UpdateUserDto,
-    @ReqUser() user: User,
-  ) {
-    return this.usersService.updateUser(updateUserDto, user.id);
-  }
-
-  @Get('/')
-  public retrieveAccount(@Req() req: Request) {
+  @Get()
+  retrieveAccount(@Req() req: Request) {
+    this.logger.log('GET /api/users');
     return req.user;
   }
 
-  @Delete('/delete')
-  public deleteAccount(@ReqUser() user: User) {
+  @Patch()
+  updateAccount(@Body() updateUserDto: UpdateUserDto, @ReqUser() user: User) {
+    this.logger.log('PATCH /api/users');
+    return this.usersService.updateUser(updateUserDto, user.id);
+  }
+
+  @Delete()
+  deleteAccount(@ReqUser() user: User) {
+    this.logger.log(`DELETE /api/users User ID: ${user.id}`);
     return this.usersService.deleteUser(user.id);
   }
 }

@@ -1,8 +1,8 @@
 import { validate } from "class-validator";
-import { errorToast } from "../components/toasts";
+import * as toast from "@/components/toasts";
 import { IsNotEmpty, IsString, MinLength } from "class-validator";
 import { Params } from "react-router-dom";
-import { BASE_API_URL } from "../lib/constants";
+import { BASE_API_URL } from "@/lib/constants";
 
 class UpdateProjectDto {
   @IsNotEmpty()
@@ -26,7 +26,7 @@ const updateProjectAction = async ({
   const errors = await validate(project);
   if (errors.length > 0) {
     const error = errors[0].constraints;
-    return errorToast(
+    return toast.error(
       error ? error[Object.keys(error)[0]] : "Oops... Something went wrong"
     );
   }
@@ -47,7 +47,7 @@ const updateProjectAction = async ({
       const errorMessage = Array.isArray(json.message)
         ? json.message[0]
         : json.message;
-      return errorToast(errorMessage);
+      return toast.error(errorMessage);
     }
     if (json.id) {
       return { id: json.id };
@@ -56,10 +56,9 @@ const updateProjectAction = async ({
     if (e instanceof Error) {
       console.error(e.message);
     }
-    return errorToast("Oops... Something went wrong.");
   }
 
-  return errorToast("Oops... Something went wrong.");
+  return toast.error("Oops... Something went wrong.");
 };
 
 export default updateProjectAction;

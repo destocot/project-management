@@ -21,7 +21,7 @@ export class User {
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToMany(() => Project, (project) => project.owner, { cascade: true })
+  @OneToMany(() => Project, (project) => project.owner)
   projects: Array<Project>;
 
   constructor(user: Partial<User>) {

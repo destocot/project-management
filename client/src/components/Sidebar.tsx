@@ -53,7 +53,7 @@ export default function Sidebar() {
       <ListItem>
         <Flex
           as={NavLink}
-          to="/projects/create"
+          to="/create"
           p={4}
           borderRadius="lg"
           _hover={{ bg: "whiteAlpha.200" }}
@@ -65,7 +65,7 @@ export default function Sidebar() {
       <ListItem>
         <Flex
           as={NavLink}
-          to="/projects/archive"
+          to="/archive"
           p={4}
           borderRadius="lg"
           _hover={{ bg: "whiteAlpha.200" }}

@@ -28,11 +28,6 @@ import {
   updateProjectAction,
   archiveProjectAction,
 } from "./actions";
-import {
-  archivedProjectsLoader,
-  projectDetailsLoader,
-  projectsLoader,
-} from "./loaders";
 import { BASE_API_URL } from "./lib/constants";
 
 const router = createBrowserRouter(
@@ -44,29 +39,25 @@ const router = createBrowserRouter(
         <Route path="signup" element={<SignupPage />} action={signupAction} />
       </Route>
       <Route path="/" element={<MainLayout />}>
+        <Route
+          path="create"
+          element={<CreatePage />}
+          action={createProjectAction}
+        />
         <Route path="projects" action={archiveProjectAction}>
-          <Route index element={<ProjectsPage />} loader={projectsLoader} />
+          <Route index element={<ProjectsPage />} />
           <Route
-            path="create"
-            element={<CreatePage />}
-            action={createProjectAction}
+            path=":projectId"
+            element={<ProjectDetailsPage />}
+            action={updateProjectAction}
+            errorElement={<ProjectNotFound />}
           />
-          <Route
-            path="archive"
-            element={<ArchivePage />}
-            loader={archivedProjectsLoader}
-            action={archiveProjectAction}
-          />
-          <Route path="view">
-            <Route
-              path=":id"
-              element={<ProjectDetailsPage />}
-              loader={projectDetailsLoader}
-              action={updateProjectAction}
-              errorElement={<ProjectNotFound />}
-            />
-          </Route>
         </Route>
+        <Route
+          path="archive"
+          element={<ArchivePage />}
+          action={archiveProjectAction}
+        />
         <Route
           path="account"
           element={<AccountPage />}

@@ -1,42 +1,36 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Logger, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('auth')
+@ApiTags('auth')
+@Controller()
 export class AuthController {
-  private readonly authService: AuthService;
+  private readonly logger: Logger;
 
-  constructor(authService: AuthService) {
-    this.authService = authService;
+  constructor(private readonly authService: AuthService) {
+    this.logger = new Logger('AuthController', { timestamp: true });
   }
 
   @Post('signin')
-  public async signin(@Body() signinDto: SigninDto, @Res() res: Response) {
-    const { accessToken, user } = await this.authService.signin(signinDto);
-    this.setAccessToken(res, accessToken);
-    return res.json({ data: user });
+  @HttpCode(200)
+  signin(@Body() signinDto: SigninDto, @Res() res: Response) {
+    this.logger.log('POST /api/auth/signin');
+    return this.authService.signin(signinDto, res);
   }
 
   @Post('signup')
-  public async signup(@Body() signupDto: SignupDto, @Res() res: Response) {
-    const { accessToken, user } = await this.authService.signup(signupDto);
-    this.setAccessToken(res, accessToken);
-    return res.json({ data: user });
+  signup(@Body() signupDto: SignupDto, @Res() res: Response) {
+    this.logger.log('POST /api/auth/signup');
+    return this.authService.signup(signupDto, res);
   }
 
   @Post('signout')
-  public signout(@Res() res: Response) {
-    res.status(200).clearCookie('access_token').end();
-  }
-
-  private setAccessToken(res: Response, access_token: string) {
-    res.cookie('access_token', access_token, {
-      expires: new Date(Date.now() + 3600000),
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    });
+  @HttpCode(200)
+  signout(@Res() res: Response) {
+    this.logger.log('POST /api/auth/signout');
+    res.clearCookie('access_token').end();
   }
 }

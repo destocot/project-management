@@ -1,6 +1,30 @@
 import { validate } from "class-validator";
-import { UpdateUserDto } from "../lib/schemas";
 import { BASE_API_URL } from "../lib/constants";
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  IsOptional,
+  ValidateIf,
+} from "class-validator";
+import * as toast from "@/components/toasts";
+
+class UpdateUserDto {
+  @IsString({ message: "Email must be a valid format." })
+  @IsEmail({}, { message: "Email must be a valid format." })
+  @IsOptional()
+  email?: string;
+
+  @IsString({ message: "Password must be a string." })
+  @MinLength(6, { message: "Password must be at least 6 characters." })
+  @IsOptional()
+  password?: string;
+
+  @IsString({ message: "Password must be a string." })
+  @MinLength(6, { message: "Password must be at least 6 characters." })
+  @ValidateIf((o) => o.password?.length >= 6)
+  currentPassword: string;
+}
 
 const updateUserAction = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
@@ -14,14 +38,13 @@ const updateUserAction = async ({ request }: { request: Request }) => {
 
   if (errors.length > 0) {
     const error = errors[0].constraints;
-    return {
-      data: null,
-      error: error
-        ? error[Object.keys(error)[0]]
-        : "Oops... Something went wrong",
-    };
-  } else {
-    const res = await fetch(`${BASE_API_URL}/users/account/edit`, {
+    return toast.error(
+      error ? error[Object.keys(error)[0]] : "Oops... Something went wrong"
+    );
+  }
+
+  try {
+    const res = await fetch(`${BASE_API_URL}/users/account`, {
       method: "PATCH",
       body: JSON.stringify(user),
       headers: {
@@ -29,20 +52,20 @@ const updateUserAction = async ({ request }: { request: Request }) => {
       },
       credentials: "include",
     });
-
     const json = await res.json();
 
     if (json.error) {
       const error = json.message ?? "Oops... Something went wrong";
-      return { error };
+      return toast.error(error);
     }
 
-    if (json.affected === 1) {
-      return { data: { email: user.email, success: true } };
+    if (json.affected === 1) return { email: user.email, success: true };
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
     }
   }
-
-  return null;
+  return toast.error("Oops... Something went wrong.");
 };
 
 export default updateUserAction;

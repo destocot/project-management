@@ -1,4 +1,5 @@
-import { successToast, errorToast } from "../components/toasts";
+import { store, util } from "@/store";
+import * as toast from "../components/toasts";
 import { BASE_API_URL } from "../lib/constants";
 
 const softDeleteProjectAction = async ({ request }: { request: Request }) => {
@@ -7,7 +8,7 @@ const softDeleteProjectAction = async ({ request }: { request: Request }) => {
   const projectId = formData.get("projectId") as string;
 
   if (!projectId) {
-    return errorToast("Oops... Something went wrong");
+    return toast.error("Oops... Something went wrong");
   }
 
   try {
@@ -22,16 +23,17 @@ const softDeleteProjectAction = async ({ request }: { request: Request }) => {
       const errorMessage = Array.isArray(json.message)
         ? json.message[0]
         : json.message;
-      return errorToast(errorMessage);
+      return toast.error(errorMessage);
     }
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.message);
     }
-    return errorToast("Oops... Something went wrong.");
+    return toast.error("Oops... Something went wrong.");
   }
 
-  return successToast("Project status updated.");
+  store.dispatch(util.invalidateTags(["Projects"]));
+  return toast.success("Project status updated.");
 };
 
 export default softDeleteProjectAction;

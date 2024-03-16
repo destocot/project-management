@@ -1,25 +1,23 @@
-import HomePage from "./page";
-import SigninPage from "./signin/page";
-import SignupPage from "./signup/page";
-import AccountPage from "./account/page";
+import HomePage from "@/pages/home";
+import SigninPage from "@/pages/signin";
+import SignupPage from "@/pages/signup";
+import AccountPage from "@/pages/account";
+import CreatePage from "@/pages/create";
+import ProjectsPage from "@/pages/projects";
+import ProjectDetailsPage from "@/pages/projects/[id]";
+import ArchivePage from "@/pages/archive";
 
-// projects
-import ProjectsPage from "./projects/page";
-import CreatePage from "./projects/create/page";
-import ArchivePage from "./projects/archive/page";
-//view
-// [id]
-import ProjectDetailsPage from "./projects/view/[id]/page";
-
-import NotFound, { ProjectNotFound } from "./NotFound";
+/* Not Found Pages */
+import NotFound from "@/pages/not-found";
+import ProjectNotFound from "@/pages//projects/[id]/not-found";
 
 export {
   HomePage,
   SigninPage,
   SignupPage,
   AccountPage,
-  ProjectsPage,
   CreatePage,
+  ProjectsPage,
   ProjectDetailsPage,
   ArchivePage,
   NotFound,

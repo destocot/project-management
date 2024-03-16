@@ -19,7 +19,7 @@ export class Task {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Feature, (feature) => feature.tasks)
+  @ManyToOne(() => Feature, (feature) => feature.tasks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'feature_id' })
   feature: Feature;
 

@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
@@ -13,30 +12,24 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  private readonly usersRepository: Repository<User>;
-
   constructor(
     @InjectRepository(User)
-    usersRepository: Repository<User>,
-  ) {
-    this.usersRepository = usersRepository;
-  }
+    private readonly usersRepository: Repository<User>,
+  ) {}
 
-  public async retrieveUserByEmail(email: string): Promise<User> {
+  async retrieveUserByEmail(email: string): Promise<User> {
     return await this.usersRepository.findOneBy({ email });
   }
 
-  public async retrieveUserById(id: string): Promise<User> {
+  async retrieveUserById(id: string): Promise<User> {
     return await this.usersRepository.findOneBy({ id });
   }
 
-  public async createUser(signupDto: SignupDto): Promise<User> {
+  async createUser(signupDto: SignupDto): Promise<User> {
     const { email, password } = signupDto;
 
     const isEmailTaken = await this.retrieveUserByEmail(email);
-    if (isEmailTaken) {
-      throw new ConflictException('Email already exists');
-    }
+    if (isEmailTaken) throw new ConflictException('Email already exists');
 
     const user = new User({ email });
     user.password = await bcrypt.hash(password, 10);
@@ -44,41 +37,24 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  public async updateUser(updateUserDto: UpdateUserDto, userId: string) {
-    const user = await this.retrieveUserById(userId);
-
+  async updateUser(updateUserDto: UpdateUserDto, id: string) {
     const { email, currentPassword, password } = updateUserDto;
 
-    if (!email && !password) return null;
-
-    const query = this.usersRepository
-      .createQueryBuilder()
-      .update()
-      .where({ id: user.id });
-
     if (email) {
-      query.set({ email });
+      return await this.usersRepository.update({ id }, { email });
     }
 
     if (password) {
+      const user = await this.retrieveUserById(id);
       const valid = await bcrypt.compare(currentPassword, user.password);
-      if (!valid) {
-        throw new BadRequestException('Invalid password');
-      }
-      const hashed = await bcrypt.hash(password, 10);
-      query.set({ password: hashed });
-    }
+      if (!valid) throw new BadRequestException('Invalid password');
 
-    return query.execute();
+      const hashed = await bcrypt.hash(password, 10);
+      return await this.usersRepository.update({ id }, { password: hashed });
+    }
   }
 
-  public async deleteUser(userId: string) {
-    const user = await this.retrieveUserById(userId);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
-    return this.usersRepository.delete({ id: user.id });
+  async deleteUser(id: string) {
+    return this.usersRepository.delete({ id });
   }
 }
