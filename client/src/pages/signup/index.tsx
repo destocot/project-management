@@ -9,24 +9,9 @@ import {
   Box,
   Link as ChakraLink,
 } from "@chakra-ui/react";
-import { useDispatch } from "react-redux";
-import { signin } from "@/store/authSlice";
-import { Form, Link, useActionData } from "react-router-dom";
-import { useEffect } from "react";
-import { SignupResponse } from "@/lib/types";
-import * as toast from "@/components/toasts";
+import { Form, Link } from "react-router-dom";
 
 export default function SignupPage() {
-  const dispatch = useDispatch();
-  const response = useActionData() as SignupResponse;
-
-  useEffect(() => {
-    if (response?.data) {
-      dispatch(signin(response.data));
-      toast.success("Welcome!");
-    }
-  }, [dispatch, response?.data]);
-
   return (
     <Flex flexDir="column" justify="center" gap={4} h="75%">
       <Heading as="h2" alignSelf="center">

@@ -3,10 +3,11 @@ import authReducer from "./authSlice";
 import featureReducer from "./featureSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Feature, Project, Task } from "../lib/types";
+import { BASE_API_URL } from "@/lib/constants";
 
 const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/api",
+    baseUrl: BASE_API_URL,
   }),
   tagTypes: ["Projects", "Features", "Tasks"],
   endpoints: (build) => ({
