@@ -19,12 +19,13 @@ import { Task } from '../entities/task.entity';
 const configService = new ConfigService();
 
 const args = process.argv.slice(2);
-const emailFromCLI = args.find((arg) => arg.startsWith('--email='));
-const passwordFromCLI = args.find((arg) => arg.startsWith('--password='));
+console.log(args);
+const emailFromCLI = args.find((arg) => arg.startsWith('email='));
+const passwordFromCLI = args.find((arg) => arg.startsWith('password='));
 
 if (!passwordFromCLI || !emailFromCLI) {
   console.error(
-    'Error: Please provide a seed user email and password using the --email=<FILL_ME> --password=<FILL_ME> option.',
+    'Error: Please provide a seed user email and password using the email=<FILL_ME> password=<FILL_ME> option.',
   );
   process.exit(1);
 }
@@ -32,7 +33,7 @@ if (!passwordFromCLI || !emailFromCLI) {
 const SEED_USER_EMAIL = emailFromCLI.split('=')[1];
 if (!isEmail(SEED_USER_EMAIL)) {
   console.error(
-    'Error: Please provide a valid seed user email with the --email=<FILL_ME> option.',
+    'Error: Please provide a valid seed user email with the email=<FILL_ME> option.',
   );
   process.exit(1);
 }

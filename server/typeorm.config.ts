@@ -13,6 +13,7 @@ export const dataSourceOptions = {
   database: configService.getOrThrow('DB_NAME'),
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['migrations/*{.ts,.js}'],
+  synchronize: true,
 } satisfies DataSourceOptions;
 
 export default new DataSource(dataSourceOptions);
