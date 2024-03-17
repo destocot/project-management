@@ -64,13 +64,12 @@ export default function FeatureColumn({ features, status }: FeatureColumProps) {
         flexDir="column"
         gap={4}
         overflowY="auto"
-        h={{ base: "sm", lg: "xl" }}
+        h={{ base: "200px", lg: "xl" }}
         onDrop={handleOnDrop}
         onDragOver={handleOnDrag}
       >
-        {features.map((f) => (
-          <FeatureEntry feature={f} key={f.id} />
-        ))}
+        {features.length > 0 &&
+          features.map((f) => <FeatureEntry feature={f} key={f.id} />)}
       </Flex>
       {status === FeatureStatus.OPEN && <CreateFeatureButton />}
     </Box>

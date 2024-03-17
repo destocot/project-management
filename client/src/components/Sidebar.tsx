@@ -9,6 +9,13 @@ import {
   InfoOutlineIcon,
 } from "@chakra-ui/icons";
 
+const links = [
+  { href: "/account", label: "Account Details", icon: InfoOutlineIcon },
+  { href: "/projects", label: "All Projects", icon: CalendarIcon },
+  { href: "/create", label: "New Project", icon: EditIcon },
+  { href: "/archive", label: "Archive", icon: RepeatClockIcon },
+];
+
 export default function Sidebar() {
   const authenticated = useSelector(
     ({ auth }: RootState) => auth.authenticated
@@ -23,57 +30,27 @@ export default function Sidebar() {
       gap={4}
       display="flex"
       flexDir={{ base: "row", lg: "column" }}
+      flexWrap="wrap"
+      justifyContent={{ base: "space-evenly", lg: "flex-start" }}
+      alignItems={{ base: "center", lg: "flex-start" }}
+      h="100%"
     >
-      <ListItem>
-        <Flex
-          as={NavLink}
-          to="/account"
-          end
-          p={4}
-          borderRadius="lg"
-          _hover={{ bg: "whiteAlpha.200" }}
-        >
-          <ListIcon as={InfoOutlineIcon} />
-          Account Details
-        </Flex>
-      </ListItem>
-      <ListItem>
-        <Flex
-          as={NavLink}
-          to="/projects"
-          end
-          p={4}
-          borderRadius="lg"
-          _hover={{ bg: "whiteAlpha.200" }}
-        >
-          <ListIcon as={CalendarIcon} />
-          All Projects
-        </Flex>
-      </ListItem>
-      <ListItem>
-        <Flex
-          as={NavLink}
-          to="/create"
-          p={4}
-          borderRadius="lg"
-          _hover={{ bg: "whiteAlpha.200" }}
-        >
-          <ListIcon as={EditIcon} />
-          New Project
-        </Flex>
-      </ListItem>
-      <ListItem>
-        <Flex
-          as={NavLink}
-          to="/archive"
-          p={4}
-          borderRadius="lg"
-          _hover={{ bg: "whiteAlpha.200" }}
-        >
-          <ListIcon as={RepeatClockIcon} />
-          Archive
-        </Flex>
-      </ListItem>
+      {links.map(({ href, label, icon }) => (
+        <ListItem key={href}>
+          <Flex
+            as={NavLink}
+            to={href}
+            end
+            p={{ base: 2, lg: 4 }}
+            borderRadius="lg"
+            _hover={{ bg: "whiteAlpha.200" }}
+            whiteSpace="nowrap"
+          >
+            <ListIcon as={icon} />
+            {label}
+          </Flex>
+        </ListItem>
+      ))}
     </List>
   );
 }

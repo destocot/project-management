@@ -44,7 +44,12 @@ export default function TasksModal({ feature }: TasksModalProps) {
         <HamburgerIcon boxSize={6} />
       </Button>
 
-      <Modal isOpen={isOpen} onClose={handleOnClose} size="6xl" isCentered>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleOnClose}
+        size={{ base: "sm", lg: "6xl" }}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -65,6 +70,7 @@ export default function TasksModal({ feature }: TasksModalProps) {
                 variant="outline"
                 _hover={{ bg: "blue.600", color: "white" }}
                 onClick={handleOnClose}
+                size={{ base: "sm", lg: "md" }}
               >
                 Close
               </Button>

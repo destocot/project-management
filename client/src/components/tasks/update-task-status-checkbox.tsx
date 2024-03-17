@@ -1,4 +1,4 @@
-import { Checkbox, Text } from "@chakra-ui/react";
+import { Checkbox, Text, HStack } from "@chakra-ui/react";
 import { Task } from "@/lib/types";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,16 +38,23 @@ export default function UpdateTaskStatusCheckbox({
   };
 
   return (
-    <Checkbox
-      size="lg"
-      colorScheme="blue"
-      isChecked={task.is_completed}
-      gap={4}
-      onChange={handleUpdateTask}
-    >
-      <Text fontSize="xl" as={task.is_completed ? "s" : "p"}>
+    <HStack gap={2} w="100%" mr={2}>
+      <Checkbox
+        size="lg"
+        colorScheme="blue"
+        isChecked={task.is_completed}
+        gap={4}
+        onChange={handleUpdateTask}
+      ></Checkbox>
+      <Text
+        fontSize={{ base: "md", lg: "xl" }}
+        as={task.is_completed ? "s" : "p"}
+        onClick={handleUpdateTask}
+        _hover={{ cursor: "pointer" }}
+        w="100%"
+      >
         {task.content}
       </Text>
-    </Checkbox>
+    </HStack>
   );
 }

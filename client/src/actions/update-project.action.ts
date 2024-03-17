@@ -30,9 +30,8 @@ const updateProjectAction = async ({
       error ? error[Object.keys(error)[0]] : "Oops... Something went wrong"
     );
   }
-
   try {
-    const res = await fetch(`${BASE_API_URL}/projects/${params.id}`, {
+    const res = await fetch(`${BASE_API_URL}/projects/${params.projectId}`, {
       method: "PATCH",
       body: JSON.stringify(project),
       headers: {
@@ -49,9 +48,8 @@ const updateProjectAction = async ({
         : json.message;
       return toast.error(errorMessage);
     }
-    if (json.id) {
-      return { id: json.id };
-    }
+
+    return json;
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.message);

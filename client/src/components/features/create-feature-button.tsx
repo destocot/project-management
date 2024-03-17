@@ -74,7 +74,7 @@ export default function CreateFeatureButton() {
         <PlusSquareIcon boxSize={6} />
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", lg: "md" }}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add Feature</ModalHeader>

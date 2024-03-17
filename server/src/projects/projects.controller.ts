@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Logger,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -43,7 +44,10 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @ReqUser() user: User): Promise<Project> {
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @ReqUser() user: User,
+  ): Promise<Project> {
     this.logger.log(`GET /api/projects/${id}`);
     return this.projectsService.findOne(id, user.id);
   }

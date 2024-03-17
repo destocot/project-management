@@ -15,7 +15,11 @@ export default function ArchiveProjectButton({
   return (
     <Form method="PATCH" action={action}>
       <Input type="hidden" name="projectId" value={projectId} />
-      <Button type="submit" colorScheme="warning" size="sm">
+      <Button
+        type="submit"
+        colorScheme="warning"
+        size={{ base: "xs", lg: "sm" }}
+      >
         {deletedAt ? "Restore" : "Archive"}
       </Button>
     </Form>

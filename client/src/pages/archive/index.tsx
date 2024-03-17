@@ -29,10 +29,15 @@ export default function ProjectsPage() {
   if (isError) return <GenericError />;
 
   return (
-    <Box p={4}>
+    <Box p={{ lg: 4 }}>
       <Heading as="h2">Archived Projects</Heading>
-      <TableContainer maxW={{ lg: "75%" }} mt={4} maxH="3xl" overflowY="auto">
-        <Table colorScheme="gray" p={4}>
+      <TableContainer
+        maxW={{ base: "100%", lg: "80%" }}
+        mt={4}
+        maxH="3xl"
+        overflowY="auto"
+      >
+        <Table colorScheme="blue" p={4} size={{ base: "sm", lg: "md" }}>
           <Thead>
             <Tr>
               <Th>Title</Th>
@@ -43,15 +48,17 @@ export default function ProjectsPage() {
           <Tbody>
             {projects.map((p) => (
               <Tr key={p.id} _hover={{ bg: "gray.100" }}>
-                <Td>{p.title}</Td>
-                <Td py={0}>
+                <Td maxW={{ base: "20ch", lg: "none" }} isTruncated>
+                  {p.title}
+                </Td>
+                <Td py={0} w="10ch">
                   <ArchiveProjectButton
                     projectId={p.id}
                     deletedAt={p.deleted_at}
                     action="/archive"
                   />
                 </Td>
-                <Td py={0}>
+                <Td py={0} w="10ch">
                   <DeleteProjectButton projectId={p.id} />
                 </Td>
               </Tr>

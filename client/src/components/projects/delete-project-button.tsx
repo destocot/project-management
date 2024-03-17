@@ -52,11 +52,15 @@ export default function DeleteProjectButton({
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme="danger" size="sm">
+      <Button
+        onClick={onOpen}
+        colorScheme="danger"
+        size={{ base: "xs", lg: "sm" }}
+      >
         Delete
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", lg: "md" }}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Delete Project?</ModalHeader>

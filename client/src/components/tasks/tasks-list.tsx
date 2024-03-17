@@ -38,7 +38,11 @@ export default function TasksList() {
       </Flex>
       <Progress
         mt={4}
-        value={Math.floor((tasksProgress / tasks.length) * 100)}
+        value={
+          tasks.length > 0
+            ? Math.floor((tasksProgress / tasks.length) * 100)
+            : 0
+        }
         colorScheme="blue"
         hasStripe={true}
       />

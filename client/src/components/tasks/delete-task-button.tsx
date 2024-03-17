@@ -39,8 +39,12 @@ export default function DeleteTaskButton({ taskId }: DeleteTaskButtonProps) {
   };
 
   return (
-    <Button size="sm" colorScheme="danger" onClick={handleDeleteTask}>
-      <DeleteIcon boxSize={4} />
+    <Button
+      size={{ base: "sm", lg: "sm" }}
+      colorScheme="danger"
+      onClick={handleDeleteTask}
+    >
+      <DeleteIcon />
     </Button>
   );
 }

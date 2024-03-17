@@ -9,7 +9,7 @@ type TaskEntryProps = {
 
 export default function TaskEntry({ task }: TaskEntryProps) {
   return (
-    <Flex justify="space-between">
+    <Flex justify="space-between" align="center">
       <UpdateTaskStatusCheckbox task={task} />
       <DeleteTaskButton taskId={task.id} />
     </Flex>

@@ -9,8 +9,10 @@ export default function Navbar() {
   const email = useSelector(({ auth }: RootState) => auth.acc_email);
 
   return (
-    <Flex as="nav" p={4} mb={4} align="center">
-      <Heading as={Link}>Project Management</Heading>
+    <Flex as="nav" p={4} mb={4} align="center" flexWrap="wrap" rowGap={4}>
+      <Heading as={Link} size={{ base: "lg", lg: "xl" }}>
+        Project Management
+      </Heading>
       <Spacer />
       <HStack>
         {email ? (

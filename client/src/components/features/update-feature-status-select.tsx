@@ -56,6 +56,7 @@ export default function UpdateFeatureStatusSelect({
       w="fit-content"
       shadow="xl"
       borderColor="blue.500"
+      size={{ base: "sm", lg: "md" }}
     >
       <option value="open">OPEN</option>
       <option value="in_progress">IN PROGRESS</option>

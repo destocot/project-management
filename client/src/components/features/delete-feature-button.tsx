@@ -59,11 +59,15 @@ export default function DeleteFeatureButton() {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme="danger">
+      <Button
+        onClick={onOpen}
+        colorScheme="danger"
+        size={{ base: "sm", lg: "md" }}
+      >
         Delete Feature
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", lg: "6xl" }}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Delete Feature?</ModalHeader>

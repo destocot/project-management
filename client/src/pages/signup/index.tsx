@@ -13,7 +13,7 @@ import { Form, Link } from "react-router-dom";
 
 export default function SignupPage() {
   return (
-    <Flex flexDir="column" justify="center" gap={4} h="75%">
+    <Flex flexDir="column" justify="center" gap={4} h="75%" p={4}>
       <Heading as="h2" alignSelf="center">
         Sign Up
       </Heading>
@@ -32,7 +32,7 @@ export default function SignupPage() {
           </Button>
         </Box>
       </Form>
-      <Text mt={4} alignSelf="center" fontSize="lg">
+      <Text mt={4} alignSelf="center" fontSize={{ base: "md", lg: "lg" }}>
         Already have an account? Click{" "}
         <ChakraLink
           as={Link}
