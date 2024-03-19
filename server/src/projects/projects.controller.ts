@@ -13,10 +13,10 @@ import {
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ReqUser } from 'src/decorators/user.decorator';
-import { User } from 'src/entities/user.entity';
-import { Project } from 'src/entities/project.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ReqUser } from '../decorators/user.decorator';
+import { User } from '../entities/user.entity';
+import { Project } from '../entities/project.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('projects')
