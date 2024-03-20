@@ -63,14 +63,14 @@ export const ProjectsFactory = setSeederFactory(Project, (faker: Faker) => {
 
 export const FeaturesFactory = setSeederFactory(Feature, (faker: Faker) => {
   const feature = new Feature({});
-  feature.description = faker.lorem.words({ min: 4, max: 6 });
+  feature.description = faker.word.words({ count: { min: 4, max: 6 } });
   feature.status = faker.helpers.enumValue(FeatureStatus);
   return feature;
 });
 
 export const TasksFactory = setSeederFactory(Task, (faker: Faker) => {
   const task = new Task({});
-  task.content = faker.lorem.words({ min: 4, max: 6 });
+  task.content = faker.word.words({ count: { min: 4, max: 6 } });
 
   return task;
 });
@@ -81,6 +81,13 @@ export class MainSeeder implements Seeder {
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
     const usersFactory = factoryManager.get(User);
+
+    const usersRepository = dataSource.getRepository(User);
+    const isUserAlreadySeeded = await usersRepository.findOneBy({
+      email: SEED_USER_EMAIL,
+    });
+    if (isUserAlreadySeeded) return;
+
     const user = await usersFactory.save();
 
     const projectsFactory = factoryManager.get(Project);
@@ -112,17 +119,20 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   password: configService.getOrThrow('DB_PASSWORD'),
   database: configService.getOrThrow('DB_NAME'),
   entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
-  synchronize: configService.getOrThrow('DB_SYNCHRONIZE'),
-  logging: true,
+  synchronize: configService.get('DB_SYNCHRONIZE') ?? false,
+  // logging: true,
   seeds: [MainSeeder],
 };
 
 const dataSource = new DataSource(dataSourceOptions);
-
 dataSource.initialize().then(async () => {
   console.log('SEEDING STARTED 🌱');
-  await dataSource.synchronize(configService.getOrThrow('DB_SYNCHRONIZE'));
+
+  const dropDatabase = configService.get('DB_SYNCHRONIZE') === 'true';
+  await dataSource.synchronize(dropDatabase);
+
   await runSeeders(dataSource);
+
   console.log('SEEDING COMPLETE 🌱');
   console.log(
     `Login Information: email: ${SEED_USER_EMAIL}, password: ${SEED_USER_PASSWORD}`,
