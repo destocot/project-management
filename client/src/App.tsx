@@ -29,6 +29,7 @@ import {
   archiveProjectAction,
 } from "./actions";
 import { BASE_API_URL } from "./lib/constants";
+import { util } from "./store";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -84,14 +85,16 @@ export default function App() {
           dispatch(signin(account));
         } else {
           dispatch(signout());
+          dispatch(util.resetApiState());
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error(e.message);
         } else {
-          console.error(error);
+          console.error(e);
         }
         dispatch(signout());
+        dispatch(util.resetApiState());
       }
     })();
   }, [dispatch]);

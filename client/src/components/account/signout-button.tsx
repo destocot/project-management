@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as toast from "../toasts";
 import { BASE_API_URL } from "../../lib/constants";
+import { util } from "@/store";
 
 export default function SignoutButton() {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ export default function SignoutButton() {
     });
     if (res.ok) {
       dispatch(signout());
+      dispatch(util.resetApiState());
       navigate("/", { replace: true });
       toast.success("Good-bye!");
     } else {

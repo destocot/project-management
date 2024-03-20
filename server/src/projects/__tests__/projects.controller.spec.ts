@@ -1,40 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsController } from '../projects.controller';
 import { ProjectsService } from '../projects.service';
-import { User } from '../../entities/user.entity';
 import { Project } from '../../entities/project.entity';
-import { CreateProjectDto } from '../dto/create-project.dto';
-import { UpdateProjectDto } from '../dto/update-project.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import {
+  mockCreateProjectDto,
+  mockProject,
+  mockProjects,
+  mockUpdateProjectDto,
+  mockUser,
+} from './mockData';
 
 // Mocks
 class MockProjectRepository {}
-
-const mockUserID: User['id'] = '20d0678c-e8a0-4c9a-a863-b866cb7128e4';
-const mockUser = {
-  id: mockUserID,
-  email: 'mock@email.com',
-  created_at: new Date(),
-} as User;
-
-const mockProjectID = '681d179b-cc8b-45ff-8294-3e44730037c9';
-const mockProjectTitle = 'Lorem ipsum dolor sit amet';
-const mockProjects = [
-  {
-    id: mockProjectID,
-    title: mockProjectTitle,
-    deleted_at: null,
-    owner_id: mockUserID,
-  },
-] as Array<Project>;
-const mockProject = mockProjects[0];
-
-const mockCreateProjectDto: CreateProjectDto = {
-  title: mockProjectTitle,
-};
-const mockUpdateProjectDto: UpdateProjectDto = {
-  title: mockProjectTitle,
-};
 
 describe('ProjectsController', () => {
   let projectsController: ProjectsController;

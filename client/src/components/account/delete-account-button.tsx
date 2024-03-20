@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { signout } from "@/store/authSlice";
 import * as toast from "@/components/toasts";
 import { BASE_API_URL } from "@/lib/constants";
+import { util } from "@/store";
 
 type DeleteAccountButtonProps = {
   email: string | null;
@@ -45,6 +46,7 @@ export default function DeleteAccountButton({
 
     if (json.affected) {
       dispatch(signout());
+      dispatch(util.resetApiState());
       toast.success("Account successfully deleted.");
     } else {
       return toast.error("Oops. Something went wrong.");
