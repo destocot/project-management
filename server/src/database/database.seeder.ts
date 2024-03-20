@@ -121,7 +121,7 @@ const dataSource = new DataSource(dataSourceOptions);
 
 dataSource.initialize().then(async () => {
   console.log('SEEDING STARTED 🌱');
-  await dataSource.synchronize(true);
+  await dataSource.synchronize(configService.getOrThrow('DB_SYNCHRONIZE'));
   await runSeeders(dataSource);
   console.log('SEEDING COMPLETE 🌱');
   console.log(
