@@ -113,11 +113,12 @@ export class MainSeeder implements Seeder {
 
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
-  host: configService.getOrThrow('DB_HOST'),
-  port: configService.getOrThrow('DB_PORT'),
-  username: configService.getOrThrow('DB_USERNAME'),
-  password: configService.getOrThrow('DB_PASSWORD'),
-  database: configService.getOrThrow('DB_NAME'),
+  url: configService.getOrThrow('DATABASE_URL'),
+  // host: configService.getOrThrow('DB_HOST'),
+  // port: configService.getOrThrow('DB_PORT'),
+  // username: configService.getOrThrow('DB_USERNAME'),
+  // password: configService.getOrThrow('DB_PASSWORD'),
+  // database: configService.getOrThrow('DB_NAME'),
   entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
   synchronize: configService.get('DB_SYNCHRONIZE') ?? false,
   // logging: true,
